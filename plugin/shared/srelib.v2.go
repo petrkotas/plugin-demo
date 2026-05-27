@@ -1,3 +1,5 @@
+//go:build v2
+
 package shared
 
 import (

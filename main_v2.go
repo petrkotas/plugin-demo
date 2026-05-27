@@ -1,3 +1,5 @@
+//go:build v2
+
 package main
 
 import (
@@ -12,7 +14,7 @@ import (
 
 func main() {
 	logger := hclog.New(&hclog.LoggerOptions{
-		Name:   "plugin",
+		Name:   "V2 Client",
 		Output: os.Stdout,
 		Level:  hclog.Debug,
 	})
@@ -23,9 +25,9 @@ func main() {
 			1: {
 				"sre_library": &shared.SRELibraryPluginV1{},
 			},
-			// 2: {
-			// 	"sre_library": &shared.SRELibraryPluginV2{},
-			// },
+			2: {
+				"sre_library": &shared.SRELibraryPluginV2{},
+			},
 		},
 		Cmd:    exec.Command("./srelib"),
 		Logger: logger,
@@ -52,16 +54,16 @@ func main() {
 	}
 	logger.Info("Cluster Info V1", "info", info)
 
-	// if client.NegotiatedVersion() == 2 {
-	// 	logger.Info("Using SRE Library V2")
+	if client.NegotiatedVersion() == 2 {
+		logger.Info("Using SRE Library V2")
 
-	// 	sreLibrary := raw.(shared.SRELibraryV2)
+		sreLibraryV2 := raw.(shared.SRELibraryV2)
 
-	// 	info, err := sreLibrary.GetManagementCluster()
-	// 	if err != nil {
-	// 		logger.Error("Error getting management cluster info", "error", err)
-	// 		return
-	// 	}
-	// 	logger.Info("Management Cluster Info V2", "info", info)
-	// }
+		mgmtInfo, err := sreLibraryV2.GetManagementCluster()
+		if err != nil {
+			logger.Error("Error getting management cluster info", "error", err)
+			return
+		}
+		logger.Info("Management Cluster Info V2", "info", mgmtInfo)
+	}
 }
